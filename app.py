@@ -21,14 +21,12 @@ def load_users():
                 parts = line.split(":")
                 if len(parts) >= 2:
                     username, password = parts[0], parts[1]
-                    # третья часть — история паролей
                     history = parts[2].split(",") if len(parts) > 2 else []
                     users[username] = {"password": password, "history": history}
     return users
 
 
 def save_users(users):
-    # перезаписываем всех пользователей с их историями обратно в файл
     with open("users.txt", "w", encoding="utf-8") as file:
         for username, data in users.items():
             line = f"{username}:{data['password']}"
@@ -89,10 +87,8 @@ def index():
         complexity = request.form['complexity'].lower()
         password = generate_password(pwd_length, complexity)
 
-        # записываем этот пароль в историю пользователя
         users_full = load_users()
         if username not in users_full:
-            # вдруг это встроенный user/admin
             users_full[username] = {"password": PREDEFINED_USERS.get(username, ""), "history": []}
         users_full[username]["history"].append(password)
         save_users(users_full)
@@ -160,4 +156,3 @@ if __name__ == '__main__':
         with open("users.txt", "w", encoding="utf-8") as f:
             f.write("user:user1\nadmin:admin1\n")
     app.run(debug=True)
-
